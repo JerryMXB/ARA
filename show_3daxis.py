@@ -1,9 +1,6 @@
 from webcam import Webcam
 import numpy as np
 import cv2
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 import sys
 from PIL import Image
 
@@ -121,7 +118,7 @@ def overlayimg(img, imgpts):
 def overlayv(img, imgpts,video):
     imgpts = np.int32(imgpts).reshape(-1, 2)
     #substitute_image = cv2.imread('tuanzi.png')
-    ret, frame = cap.read()
+    ret, frame = video.read()
     print(imgpts[0:4])
     #image = add_substitute_quad(img, substitute_image, imgpts[0:4])
     image = add_substitute_quad(img, frame, imgpts[0:4])
@@ -149,7 +146,9 @@ def drawcube(img, imgpts):
     cv2.drawContours(img, [imgpts[4:]], -1, (0, 0, 255), 3)
     return img
 
+def on_bar(x):
 
+    pass
 
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((NROW * NCOL, 3), np.float32)
@@ -162,8 +161,12 @@ with np.load('posemac/webcam_calibration_ouput.npz') as X:
 
 webcam = Webcam()
 webcam.start()
-cap = cv2.VideoCapture('coke.mp4')
+cap1 = cv2.VideoCapture('coke.mp4')
+cap2 = cv2.VideoCapture('ad.mp4')
+cv2.namedWindow('img')
 
+# init bar window
+cv2.createTrackbar('Age','img',0,100,on_bar);
 
 while True:
     # get image from webcam
@@ -184,10 +187,14 @@ while True:
         # project 3D points to image plane
         imgpts, jac = cv2.projectPoints(axis, rvecs, tvecs, mtx, dist)
         #img = drawcube(img, imgpts)
-        image = overlayv(img, imgpts, cap)
+        age = cv2.getTrackbarPos('Age','img')
+        if age > 18:
+            image = overlayv(img, imgpts, cap1)
+        else:
+            image = overlayv(img, imgpts, cap2)
         #image = overlayimg(img,imgpts)
-        if img is not None:
-            cv2.imshow('img', img)
+        if image is not None:
+            cv2.imshow('img', image)
             cv2.waitKey(10)
         else:
             print('but I cannot display!')
