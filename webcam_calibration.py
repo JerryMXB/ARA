@@ -17,7 +17,7 @@ objpoints = []  # 3d point in real world space
 imgpoints = []  # 2d points in image plane.
 print('start')
 # images = glob.glob('pose\\sample_images\\*.jpg')
-images = glob.glob('pose/sample_images_3/*.jpg')
+images = glob.glob('posemac/sample_images/*.jpg')
 for fname in images:
     print(fname)
     img = cv2.imread(fname)
@@ -38,6 +38,6 @@ for fname in images:
 
 # calibrate webcam and save output
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-np.savez("pose/webcam_calibration_ouput_3", ret=ret, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
+np.savez("posemac/webcam_calibration_ouput", ret=ret, mtx=mtx, dist=dist, rvecs=rvecs, tvecs=tvecs)
 
 cv2.destroyAllWindows()

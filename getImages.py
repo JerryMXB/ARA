@@ -20,4 +20,4 @@ while True:
     if ret == True:
         print('get')
         filename = datetime.now().strftime('%Y%m%d_%Hh%Mm%Ss%f') + '.jpg'
-        cv2.imwrite("pose/sample_images/" + filename, image)
+        cv2.imwrite("posemac/sample_images/" + filename, image)
