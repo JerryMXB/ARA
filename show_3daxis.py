@@ -76,16 +76,15 @@ def add_substitute_quad(image, substitute_quad, dst):
 
     (max_width, max_height) = max_width_height(dst)
     src = topdown_points(max_width, max_height)
+    matrix = cv2.getPerspectiveTransform(src, dst)
 
     # warp perspective (with white border)
     substitute_quad = cv2.resize(substitute_quad, (max_width, max_height))
 
-    warped = np.zeros((max_height, max_width, 3), np.uint8)
-    warped[:, :, :] = 255
+    warped = image[min_y:min_y + max_height, min_x:min_x + max_width]
+    warped = cv2.warpPerspective(warped, matrix, (max_width, max_height)) + image[min_y:min_y + max_height, min_x:min_x + max_width]
 
-    matrix = cv2.getPerspectiveTransform(src, dst)
     cv2.warpPerspective(substitute_quad, matrix, (max_width, max_height), warped, borderMode=cv2.BORDER_TRANSPARENT)
-
     # add substitute quad
     image[min_y:min_y + max_height, min_x:min_x + max_width] = warped
 
