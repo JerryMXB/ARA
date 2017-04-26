@@ -78,17 +78,20 @@ def add_substitute_quad(image, substitute_quad, dst):
     src = topdown_points(max_width, max_height)
     matrix = cv2.getPerspectiveTransform(src, dst)
 
-    # warp perspective (with white border)
     substitute_quad = cv2.resize(substitute_quad, (max_width, max_height))
 
-    warped = image[min_y:min_y + max_height, min_x:min_x + max_width]
-    warped = cv2.warpPerspective(warped, matrix, (max_width, max_height)) + image[min_y:min_y + max_height, min_x:min_x + max_width]
-
-    cv2.warpPerspective(substitute_quad, matrix, (max_width, max_height), warped, borderMode=cv2.BORDER_TRANSPARENT)
-    # add substitute quad
-    image[min_y:min_y + max_height, min_x:min_x + max_width] = warped
-
+    # larger background
+    ranx = int(1.5*max_width)
+    rany = int(1.5*max_height)
+    background = np.zeros_like(image[min_y:min_y + ranx, min_x:min_x + ranx])
+    background = cv2.warpPerspective(background, matrix, (ranx, rany))
+    background += image[min_y:min_y + rany, min_x:min_x + ranx]
+    cv2.warpPerspective(substitute_quad, matrix, (ranx, rany), background, borderMode=cv2.BORDER_TRANSPARENT)
+    addy = background.shape[0]
+    addx = background.shape[1]
+    image[min_y:min_y + addy, min_x:min_x + addx] = background
     return image
+
 
 
 def resize_image(image, new_size):

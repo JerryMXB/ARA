@@ -5,6 +5,8 @@ from datetime import datetime
 webcam = Webcam()
 webcam.start()
 
+NROW = 7
+NCOL = 6
 while True:
 
     # get image from webcam
@@ -15,7 +17,7 @@ while True:
     cv2.waitKey(1000)
 
     # save image to file, if pattern found
-    ret, corners = cv2.findChessboardCorners(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), (7, 6), None)
+    ret, corners = cv2.findChessboardCorners(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), (NROW, NCOL), None)
 
     if ret == True:
         print('get')
